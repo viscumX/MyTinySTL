@@ -20,6 +20,7 @@ void push_heap_aux(RandomIter first, Distance holeIndex, Distance topIndex, T va
   {
     // 使用 operator<，所以 heap 为 max-heap
     *(first + holeIndex) = *(first + parent);
+    // 上溯
     holeIndex = parent;
     parent = (holeIndex - 1) / 2;
   }

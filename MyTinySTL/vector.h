@@ -481,7 +481,7 @@ vector<T>::insert(const_iterator pos, const value_type& value)
     auto new_end = end_;
     data_allocator::construct(mystl::address_of(*end_), *(end_ - 1));
     ++new_end;
-    auto value_copy = value;  // 避免元素因以下复制操作而被改变
+    auto value_copy = value;  // 避免元素因以下移动操作而被改变
     mystl::copy_backward(xpos, end_ - 1, end_);
     *xpos = mystl::move(value_copy);
     end_ = new_end;
@@ -625,6 +625,7 @@ get_new_cap(size_type add_size)
   const auto old_size = capacity();
   THROW_LENGTH_ERROR_IF(old_size > max_size() - add_size,
                         "vector<T>'s size too big");
+  // 16：初始容量
   if (old_size > max_size() - old_size / 2)
   {
     return old_size + add_size > max_size() - 16

@@ -134,7 +134,7 @@ iterator_category(const Iterator&)
   return Category();
 }
 
-// 萃取某个迭代器的 distance_type
+// 萃取某个迭代器的 difference_type
 template <class Iterator>
 typename iterator_traits<Iterator>::difference_type*
 distance_type(const Iterator&)

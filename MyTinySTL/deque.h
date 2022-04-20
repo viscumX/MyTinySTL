@@ -121,6 +121,8 @@ struct deque_iterator : public iterator<random_access_iterator_tag, T>
 
   difference_type operator-(const self& x) const
   {
+    // return static_cast<difference_type>(buffer_size) * (node - x.node - 1)
+    // + (cur - first) + (x.last - x.cur);
     return static_cast<difference_type>(buffer_size) * (node - x.node)
       + (cur - first) - (x.cur - x.first);
   }
@@ -826,6 +828,7 @@ void deque<T>::clear()
   }
   else
   {
+    // 只有一个缓冲区，_begin和_end指向同一块缓冲区
     mystl::destroy(begin_.cur, end_.cur);
   }
   shrink_to_fit();
@@ -901,7 +904,9 @@ template <class T>
 void deque<T>::
 map_init(size_type nElem)
 {
-  const size_type nNode = nElem / buffer_size + 1;  // 需要分配的缓冲区个数
+  // 需要分配的缓冲区个数，如果刚好整除会多分配一个
+  const size_type nNode = nElem / buffer_size + 1;
+  // 前后各预留一个节点预备扩充
   map_size_ = mystl::max(static_cast<size_type>(DEQUE_MAP_INIT_SIZE), nNode + 2);
   try
   {
@@ -987,10 +992,12 @@ fill_assign(size_type n, const value_type& value)
   if (n > size())
   {
     mystl::fill(begin(), end(), value);
+    // 在后方加入剩余的
     insert(end(), n - size(), value);
   }
   else
   {
+    // 去除后方多余的
     erase(begin() + n, end());
     mystl::fill(begin(), end(), value);
   }
@@ -1083,6 +1090,7 @@ fill_insert(iterator position, size_type n, const value_type& value)
   auto value_copy = value;
   if (elems_before < (len / 2))
   {
+    // 保证前方有n个位置
     require_capacity(n, true);
     // 原来的迭代器可能会失效
     auto old_begin = begin_;
@@ -1093,6 +1101,7 @@ fill_insert(iterator position, size_type n, const value_type& value)
       if (elems_before >= n)
       {
         auto begin_n = begin_ + n;
+        // 把原来的n个元素先copy到新deque中
         mystl::uninitialized_copy(begin_, begin_n, new_begin);
         begin_ = new_begin;
         mystl::copy(begin_n, position, old_begin);
@@ -1115,6 +1124,7 @@ fill_insert(iterator position, size_type n, const value_type& value)
   }
   else
   {
+    // 保证后方有n个位置
     require_capacity(n, false);
     // 原来的迭代器可能会失效
     auto old_end = end_;
