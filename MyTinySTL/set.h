@@ -41,6 +41,7 @@ public:
   typedef typename base_type::const_pointer          const_pointer;
   typedef typename base_type::const_reference        reference;
   typedef typename base_type::const_reference        const_reference;
+  // set的迭代器无法执行写入操作
   typedef typename base_type::const_iterator         iterator;
   typedef typename base_type::const_iterator         const_iterator;
   typedef typename base_type::const_reverse_iterator reverse_iterator;

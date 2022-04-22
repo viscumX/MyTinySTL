@@ -934,6 +934,7 @@ erase(const_iterator position)
   auto p = position.node;
   if (p)
   {
+    // 获取值所在的桶
     const auto n = hash(value_traits::get_key(p->value));
     auto cur = buckets_[n];
     if (cur == p)
